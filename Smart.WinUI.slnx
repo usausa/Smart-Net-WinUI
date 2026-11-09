@@ -6,6 +6,9 @@
     <Project Path="Smart.WinUI/Smart.WinUI.csproj" />
     <Project Path="Smart.WinUI.Extensions/Smart.WinUI.Extensions.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Smart.WinUI.Tests/Smart.WinUI.Tests.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
