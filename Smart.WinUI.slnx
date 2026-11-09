@@ -1,4 +1,11 @@
 <Solution>
+  <Folder Name="/Example/">
+    <Project Path="Example/Example.csproj" DefaultStartup="true" />
+  </Folder>
+  <Folder Name="/Library/">
+    <Project Path="Smart.WinUI/Smart.WinUI.csproj" />
+    <Project Path="Smart.WinUI.Extensions/Smart.WinUI.Extensions.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />

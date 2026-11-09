@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <UseWinUI>true</UseWinUI>
+    <IsTrimmable>true</IsTrimmable>
+    <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
+    <RootNamespace>Smart</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Usa.Smart.WinUI.Extensions</PackageId>
+    <Title>Smart.WinUI.Extensions</Title>
+    <Description>Smart WinUI support library</Description>
+    <PackageTags>smart winui mvvm rx reactive</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Smart.WinUI\Smart.WinUI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.6.5" />
+  </ItemGroup>
+
+</Project>
