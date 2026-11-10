@@ -2,5 +2,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="Example.MainWindow"
         Title="Example">
-    <Grid />
+    <NavigationView x:Name="Navigation"
+                    IsBackButtonVisible="Collapsed"
+                    IsPaneToggleButtonVisible="False"
+                    IsSettingsVisible="False"
+                    OpenPaneLength="160"
+                    PaneDisplayMode="Left"
+                    SelectionChanged="OnNavigationSelectionChanged">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Data" Tag="Data" />
+            <NavigationViewItem Content="Markup" Tag="Markup" />
+            <NavigationViewItem Content="Input" Tag="Input" />
+            <NavigationViewItem Content="Interactivity" Tag="Interactivity" />
+            <NavigationViewItem Content="Window" Tag="Window" />
+            <NavigationViewItem Content="Utilities" Tag="Utilities" />
+            <NavigationViewItem Content="Extensions" Tag="Extensions" />
+        </NavigationView.MenuItems>
+        <Frame x:Name="ContentFrame" />
+    </NavigationView>
 </Window>

@@ -5,6 +5,7 @@
   <Folder Name="/Library/">
     <Project Path="Smart.WinUI/Smart.WinUI.csproj" />
     <Project Path="Smart.WinUI.Extensions/Smart.WinUI.Extensions.csproj" />
+    <Project Path="Smart.WinUI.Hosting/Smart.WinUI.Hosting.csproj" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Smart.WinUI.Tests/Smart.WinUI.Tests.csproj" />

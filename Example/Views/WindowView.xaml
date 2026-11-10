@@ -1,0 +1,65 @@
+<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:si="using:Smart.WinUI.Interactivity"
+      x:Class="Example.Views.WindowView">
+    <StackPanel Padding="24" Spacing="16">
+        <i:Interaction.Behaviors>
+            <si:WindowClosingTrigger>
+                <si:CancelEventAction Cancel="{x:Bind ViewModel.CancelClose, Mode=OneWay}" />
+            </si:WindowClosingTrigger>
+        </i:Interaction.Behaviors>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="WindowClosingTrigger / CancelEventAction" />
+            <ToggleSwitch IsOn="{x:Bind ViewModel.CancelClose, Mode=TwoWay}" AutomationProperties.AutomationId="CancelClose" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="WindowCloseAction" />
+            <Button Content="Close">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:WindowCloseAction />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="WindowPlacementAction" />
+            <Button Content="TopLeft">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:WindowPlacementAction Margin="8" Placement="TopLeft" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+            <Button Content="TopRight">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:WindowPlacementAction Margin="8" Placement="TopRight" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+            <Button Content="Center">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:WindowPlacementAction Placement="Center" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+            <Button Content="BottomLeft">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:WindowPlacementAction Margin="8" Placement="BottomLeft" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+            <Button Content="BottomRight">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:WindowPlacementAction Margin="8" Placement="BottomRight" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+        </StackPanel>
+    </StackPanel>
+</Page>

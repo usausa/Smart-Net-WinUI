@@ -1,0 +1,158 @@
+<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:sd="using:Smart.WinUI.Data"
+      xmlns:se="using:Smart.WinUI.Expressions"
+      xmlns:sm="using:Smart.WinUI.Markup"
+      xmlns:views="using:Example.Views"
+      x:Class="Example.Views.DataView">
+    <Page.Resources>
+        <sd:BoolToTextConverter x:Key="BoolToText" TrueValue="On" FalseValue="Off" />
+        <sd:BoolToVisibilityConverter x:Key="BoolToVisibility" TrueValue="Visible" FalseValue="Collapsed" />
+        <sd:BoolToBrushConverter x:Key="BoolToBrush" TrueValue="SeaGreen" FalseValue="IndianRed" />
+        <sd:ChainConverter x:Key="BoolToBlendBrush">
+            <sd:BoolToColorConverter TrueValue="SeaGreen" FalseValue="IndianRed" />
+            <sd:ColorBlendConverter Color="White" Raito="0.5" />
+            <sd:ColorToBrushConverter />
+        </sd:ChainConverter>
+        <sd:ReverseConverter x:Key="Reverse" />
+        <sd:NullToTextConverter x:Key="NullToText" HandleEmptyString="True" NullValue="(empty)" NonNullValue="(text)" />
+        <sd:NullToParameterConverter x:Key="NullToParameter" HandleEmptyString="True" />
+        <sd:TextToBoolConverter x:Key="TextToBool" TrueValue="yes" />
+        <sd:TextReplaceConverter x:Key="TextReplace" Pattern="[aeiou]" Replacement="*" />
+        <sd:ToUpperConverter x:Key="ToUpper" />
+        <sd:ToLowerConverter x:Key="ToLower" />
+        <sd:CompareToTextConverter x:Key="EqualToText" TrueValue="Large" FalseValue="Not large" />
+        <sd:CompareToTextConverter x:Key="RegexToText" TrueValue="Digits only" FalseValue="Not digits only">
+            <sd:CompareToTextConverter.Expression>
+                <se:RegexExpression Pattern="^[0-9]+$" />
+            </sd:CompareToTextConverter.Expression>
+        </sd:CompareToTextConverter>
+        <sd:BinaryConverter x:Key="Add" Expression="{sm:BinaryExpression Value=Add}" />
+        <sd:FormatConverter x:Key="Format" />
+        <sd:ParameterEqualsConverter x:Key="ParameterEquals" />
+        <sd:MapToTextConverter x:Key="SizeToText" DefaultValue="?">
+            <sd:MapToTextConverter.Entries>
+                <sd:MapToTextEntry Key="Small" Value="S" />
+                <sd:MapToTextEntry Key="Medium" Value="M" />
+                <sd:MapToTextEntry Key="Large" Value="L" />
+            </sd:MapToTextConverter.Entries>
+        </sd:MapToTextConverter>
+        <sd:EnumDescriptionConverter x:Key="EnumDescription" />
+        <sd:ObjectConvertConverter x:Key="ObjectConvert" />
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid Padding="24" ColumnSpacing="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="150" VerticalAlignment="Center" Text="Flag" />
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.Flag, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="150" VerticalAlignment="Center" Text="Text" />
+                    <TextBox Width="180" Text="{x:Bind ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="150" VerticalAlignment="Center" Text="Number" />
+                    <Slider Width="180" Maximum="100" Minimum="0" Value="{x:Bind ViewModel.Number, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="150" Margin="0,6,0,0" Text="Size (ParameterEquals)" />
+                    <StackPanel>
+                        <RadioButton Content="Small" GroupName="Size" IsChecked="{Binding Path=Size, Mode=TwoWay, Converter={StaticResource ParameterEquals}, ConverterParameter=Small}" />
+                        <RadioButton Content="Medium" GroupName="Size" IsChecked="{Binding Path=Size, Mode=TwoWay, Converter={StaticResource ParameterEquals}, ConverterParameter=Medium}" />
+                        <RadioButton Content="Large" GroupName="Size" IsChecked="{Binding Path=Size, Mode=TwoWay, Converter={StaticResource ParameterEquals}, ConverterParameter=Large}" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="150" VerticalAlignment="Center" Text="Kind" />
+                    <ComboBox Width="180" ItemsSource="{sm:EnumValues Type=views:SampleKind}" SelectedItem="{x:Bind ViewModel.Kind, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="150" VerticalAlignment="Center" Text="Amount" />
+                    <TextBox Width="180" Text="{x:Bind ViewModel.Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="BoolToText" />
+                    <TextBlock Text="{x:Bind ViewModel.Flag, Mode=OneWay, Converter={StaticResource BoolToText}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="BoolToVisibility" />
+                    <Border Width="16" Height="16" Background="SteelBlue" Visibility="{x:Bind ViewModel.Flag, Mode=OneWay, Converter={StaticResource BoolToVisibility}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="BoolToBrush" />
+                    <Border Width="16" Height="16" Background="{x:Bind ViewModel.Flag, Mode=OneWay, Converter={StaticResource BoolToBrush}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="Chain (BoolToColor, ColorBlend, ColorToBrush)" />
+                    <Border Width="16" Height="16" Background="{x:Bind ViewModel.Flag, Mode=OneWay, Converter={StaticResource BoolToBlendBrush}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" VerticalAlignment="Center" Text="Reverse" />
+                    <CheckBox IsChecked="{x:Bind ViewModel.Flag, Mode=OneWay, Converter={StaticResource Reverse}}" IsEnabled="False" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="NullToText" />
+                    <TextBlock Text="{x:Bind ViewModel.Text, Mode=OneWay, Converter={StaticResource NullToText}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="NullToParameter" />
+                    <TextBlock Text="{x:Bind ViewModel.Text, Mode=OneWay, Converter={StaticResource NullToParameter}, ConverterParameter=(default)}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" VerticalAlignment="Center" Text="TextToBool (yes)" />
+                    <CheckBox IsChecked="{x:Bind ViewModel.Text, Mode=OneWay, Converter={StaticResource TextToBool}}" IsEnabled="False" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="TextReplace" />
+                    <TextBlock Text="{x:Bind ViewModel.Text, Mode=OneWay, Converter={StaticResource TextReplace}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="ToUpper" />
+                    <TextBlock Text="{x:Bind ViewModel.Text, Mode=OneWay, Converter={StaticResource ToUpper}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="ToLower" />
+                    <TextBlock Text="{x:Bind ViewModel.Text, Mode=OneWay, Converter={StaticResource ToLower}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="CompareToText (Equal)" />
+                    <TextBlock Text="{x:Bind ViewModel.Size, Mode=OneWay, Converter={StaticResource EqualToText}, ConverterParameter=Large}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="CompareToText (RegexExpression)" />
+                    <TextBlock Text="{x:Bind ViewModel.Text, Mode=OneWay, Converter={StaticResource RegexToText}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="Binary (Add 10)" />
+                    <ContentControl Content="{x:Bind ViewModel.Number, Mode=OneWay, Converter={StaticResource Add}, ConverterParameter=10}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="Format (N1)" />
+                    <TextBlock Text="{x:Bind ViewModel.Number, Mode=OneWay, Converter={StaticResource Format}, ConverterParameter=N1}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="MapToText" />
+                    <TextBlock Text="{x:Bind ViewModel.Size, Mode=OneWay, Converter={StaticResource SizeToText}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="EnumDescription" />
+                    <TextBlock Text="{x:Bind ViewModel.Kind, Mode=OneWay, Converter={StaticResource EnumDescription}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" VerticalAlignment="Center" Text="ObjectConvert" />
+                    <ProgressBar Width="120" Maximum="100" Value="{x:Bind ViewModel.Amount, Mode=OneWay, Converter={StaticResource ObjectConvert}}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

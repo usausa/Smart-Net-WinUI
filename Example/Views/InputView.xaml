@@ -1,0 +1,31 @@
+<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:sm="using:Smart.WinUI.Markup"
+      x:Class="Example.Views.InputView">
+    <StackPanel Padding="24" Spacing="16">
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="200" VerticalAlignment="Center" Text="DelegateCommand" />
+            <ToggleSwitch IsOn="{x:Bind ViewModel.CanCount, Mode=TwoWay}" />
+            <Button Command="{x:Bind ViewModel.CountCommand}" Content="Count" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.Count, Mode=OneWay}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="200" VerticalAlignment="Center" Text="DelegateCommand&lt;int&gt;" />
+            <Button Command="{x:Bind ViewModel.AddCommand}" CommandParameter="{sm:Int32 Value=1}" Content="+1" />
+            <Button Command="{x:Bind ViewModel.AddCommand}" CommandParameter="{sm:Int32 Value=10}" Content="+10" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.Total, Mode=OneWay}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="200" VerticalAlignment="Center" Text="AsyncCommand" />
+            <Button Command="{x:Bind ViewModel.RunCommand}" Content="Run" />
+            <ProgressRing Width="20" Height="20" IsActive="{x:Bind ViewModel.IsRunning, Mode=OneWay}" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.RunCount, Mode=OneWay}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="200" VerticalAlignment="Center" Text="AsyncCommand&lt;int&gt;" />
+            <Button Command="{x:Bind ViewModel.WaitCommand}" CommandParameter="{sm:Int32 Value=500}" Content="500 ms" />
+            <Button Command="{x:Bind ViewModel.WaitCommand}" CommandParameter="{sm:Int32 Value=2000}" Content="2000 ms" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.WaitTotal, Mode=OneWay}" />
+        </StackPanel>
+    </StackPanel>
+</Page>

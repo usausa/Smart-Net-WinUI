@@ -1,0 +1,62 @@
+<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:local="using:Example.Views"
+      xmlns:si="using:Smart.WinUI.Interactivity"
+      x:Class="Example.Views.UtilitiesView">
+    <StackPanel Padding="24" Spacing="16">
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="FindAscendant / FindDescendants" />
+            <Border x:Name="TreeRoot" Tag="outer">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button x:Name="FindButton" Click="OnFindClick" Content="Find" />
+                    <TextBlock x:Name="TreeResult" VerticalAlignment="Center" AutomationProperties.AutomationId="TreeResult" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="FindParent / IsDescendantOf" />
+            <Border x:Name="ParentRoot" Tag="parent">
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <Button Content="Open">
+                        <Button.Flyout>
+                            <Flyout>
+                                <Button Click="OnFlyoutParentClick" Content="Parent" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <TextBlock VerticalAlignment="Center">
+                        <Hyperlink Click="OnHyperlinkClick">Link</Hyperlink>
+                    </TextBlock>
+                    <TextBlock x:Name="ParentResult" VerticalAlignment="Center" AutomationProperties.AutomationId="ParentResult" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="FindFromPoint" />
+            <Button Click="OnHitClick" Content="Hit" />
+            <TextBlock x:Name="HitResult" VerticalAlignment="Center" AutomationProperties.AutomationId="HitResult" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="EnqueueAsync" />
+            <Button Command="{x:Bind ViewModel.EnqueueCommand}" Content="Enqueue" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.EnqueueResult, Mode=OneWay}" AutomationProperties.AutomationId="EnqueueResult" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="ChangeCursorAction (Hand)" />
+            <Border Width="160" Height="32" Background="{ThemeResource ControlFillColorSecondaryBrush}">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Loaded">
+                        <si:ChangeCursorAction Cursor="Hand" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Border>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="ColorExtensions (HslColor)" />
+            <Slider Width="200" Maximum="360" Minimum="0" Value="{x:Bind ViewModel.Hue, Mode=TwoWay}" AutomationProperties.AutomationId="HueSlider" />
+            <Rectangle Width="32" Height="32" Fill="{x:Bind local:UtilitiesView.ToBrush(ViewModel.Hue), Mode=OneWay}" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind local:UtilitiesView.ToHex(ViewModel.Hue), Mode=OneWay}" AutomationProperties.AutomationId="HueColor" />
+        </StackPanel>
+    </StackPanel>
+</Page>

@@ -11,16 +11,21 @@
     <WindowsPackageType>None</WindowsPackageType>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <SelfContained>true</SelfContained>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    <StartupObject>Example.Program</StartupObject>
     <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Smart.WinUI\Smart.WinUI.csproj" />
     <ProjectReference Include="..\Smart.WinUI.Extensions\Smart.WinUI.Extensions.csproj" />
+    <ProjectReference Include="..\Smart.WinUI.Hosting\Smart.WinUI.Hosting.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.6.5" />
+    <PackageReference Include="Usa.Smart.Mvvm" Version="2.18.0" />
   </ItemGroup>
 
 </Project>

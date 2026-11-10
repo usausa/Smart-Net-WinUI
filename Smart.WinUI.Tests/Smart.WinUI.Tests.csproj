@@ -6,6 +6,7 @@
     <OutputType>Exe</OutputType>
     <UseCurrentRuntimeIdentifier>true</UseCurrentRuntimeIdentifier>
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <CsWinRTAotOptimizerEnabled>false</CsWinRTAotOptimizerEnabled>
     <RootNamespace>Smart</RootNamespace>
     <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>

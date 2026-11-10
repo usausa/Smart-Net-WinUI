@@ -1,0 +1,180 @@
+<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
+      xmlns:si="using:Smart.WinUI.Interactivity"
+      xmlns:sm="using:Smart.WinUI.Markup"
+      x:Class="Example.Views.InteractivityView">
+    <StackPanel Padding="24" Spacing="8">
+        <i:Interaction.Behaviors>
+            <si:DefaultFocusBehavior />
+        </i:Interaction.Behaviors>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="DefaultFocusBehavior" />
+            <TextBox Width="200" si:DefaultFocus.IsTarget="True" AutomationProperties.AutomationId="DefaultTarget" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="CompareTrigger (GreaterThan 3)" />
+            <Button Command="{x:Bind ViewModel.AddNumberCommand}" Content="+1" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.Number, Mode=OneWay}">
+                <i:Interaction.Behaviors>
+                    <si:CompareTrigger Binding="{x:Bind ViewModel.Number, Mode=OneWay}" Expression="{sm:CompareExpression Value=GreaterThan}" Parameter="3">
+                        <i:InvokeCommandAction Command="{x:Bind ViewModel.MatchCommand}" />
+                    </si:CompareTrigger>
+                </i:Interaction.Behaviors>
+            </TextBlock>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.MatchCount, Mode=OneWay}" AutomationProperties.AutomationId="MatchCount" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="CallMethodAction" />
+            <Button Content="Ping()">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:CallMethodAction TargetObject="{x:Bind ViewModel}" MethodName="Ping" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+            <Button Content="Append(x)">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:CallMethodAction TargetObject="{x:Bind ViewModel}" MethodName="Append" MethodParameter="x" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.CallText, Mode=OneWay}" AutomationProperties.AutomationId="CallText" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="ClipboardSetDataAction" />
+            <Button Content="Copy">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:ClipboardSetDataAction TargetObject="{x:Bind ViewModel}" MethodName="MakeCopyText" Format="Text" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="DataContextDisposeAction" />
+            <ToggleSwitch IsOn="{x:Bind ViewModel.ShowChild, Mode=TwoWay}" AutomationProperties.AutomationId="ShowChild" />
+            <Border x:Name="Child" x:Load="{x:Bind ViewModel.ShowChild, Mode=OneWay}" DataContext="{x:Bind ViewModel.Child}">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Unloaded">
+                        <si:DataContextDisposeAction />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+                <TextBlock VerticalAlignment="Center" Text="Child" />
+            </Border>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.DisposeCount, Mode=OneWay}" AutomationProperties.AutomationId="DisposeCount" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="SetFocusAction" />
+            <Button Content="Focus">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:SetFocusAction TargetObject="{x:Bind FocusTarget}" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+            <TextBox x:Name="FocusTarget" Width="200" AutomationProperties.AutomationId="FocusTarget" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="EnterKeyToCommandBehavior" />
+            <TextBox Width="200" AutomationProperties.AutomationId="EnterBox">
+                <i:Interaction.Behaviors>
+                    <si:EnterKeyToCommandBehavior Command="{x:Bind ViewModel.EnterCommand}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.EnterCount, Mode=OneWay}" AutomationProperties.AutomationId="EnterCount" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="LongPressBehavior" />
+            <Button Content="Hold">
+                <i:Interaction.Behaviors>
+                    <si:LongPressBehavior Command="{x:Bind ViewModel.LongPressCommand}" Duration="0:0:0.5" />
+                </i:Interaction.Behaviors>
+            </Button>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.LongPressCount, Mode=OneWay}" AutomationProperties.AutomationId="LongPressCount" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="TypingStoppedBehavior" />
+            <TextBox Width="200" AutomationProperties.AutomationId="TypingBox">
+                <i:Interaction.Behaviors>
+                    <si:TypingStoppedBehavior Command="{x:Bind ViewModel.TypedCommand}" Delay="0:0:0.5" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.TypedText, Mode=OneWay}" AutomationProperties.AutomationId="TypedText" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="MaskedTextBehavior" />
+            <TextBox Width="200" AutomationProperties.AutomationId="MaskedBox">
+                <i:Interaction.Behaviors>
+                    <si:MaskedTextBehavior IncludeLiterals="False" Mask="000-0000-0000" Value="{x:Bind ViewModel.PhoneNumber, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.PhoneNumber, Mode=OneWay}" AutomationProperties.AutomationId="PhoneNumber" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="SelectAllTextOnFocusBehavior" />
+            <TextBox Width="200" Text="Select all" AutomationProperties.AutomationId="SelectBox">
+                <i:Interaction.Behaviors>
+                    <si:SelectAllTextOnFocusBehavior />
+                </i:Interaction.Behaviors>
+            </TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="SelectAllTextAction (Loaded)" />
+            <TextBox Width="200" Text="Selected on load" AutomationProperties.AutomationId="LoadedBox">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Loaded">
+                        <si:SelectAllTextAction />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="ListBoxSelectedItemsBehavior" />
+            <ListView ItemsSource="{x:Bind ViewModel.Letters}" SelectionMode="Multiple" AutomationProperties.AutomationId="MultiList">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <i:Interaction.Behaviors>
+                    <si:ListBoxSelectedItemsBehavior SelectedItems="{x:Bind ViewModel.SelectedLetters, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+            </ListView>
+            <Button Command="{x:Bind ViewModel.ReadCommand}" Content="Read" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.SelectedText, Mode=OneWay}" AutomationProperties.AutomationId="SelectedText" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="ListBoxSingleSelectionBehavior" />
+            <ListBox ItemsSource="{x:Bind ViewModel.Letters}" AutomationProperties.AutomationId="SingleList">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <i:Interaction.Behaviors>
+                    <si:ListBoxSingleSelectionBehavior SelectedItem="{x:Bind ViewModel.SingleLetter, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+            </ListBox>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.SingleLetter, Mode=OneWay}" AutomationProperties.AutomationId="SingleLetter" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="260" VerticalAlignment="Center" Text="ScrollIntoOnChanged / ScrollIntoAction" />
+            <ListView Width="160" Height="88" ItemsSource="{x:Bind ViewModel.Logs}" AutomationProperties.AutomationId="LogList">
+                <i:Interaction.Behaviors>
+                    <si:ScrollIntoOnChangedBehavior />
+                    <si:CompareTrigger Binding="{x:Bind ViewModel.FirstRequest, Mode=OneWay}" Expression="{sm:CompareExpression Value=GreaterThan}" Parameter="0">
+                        <si:ScrollIntoAction Position="First" />
+                    </si:CompareTrigger>
+                    <si:CompareTrigger Binding="{x:Bind ViewModel.LastRequest, Mode=OneWay}" Expression="{sm:CompareExpression Value=GreaterThan}" Parameter="0">
+                        <si:ScrollIntoAction />
+                    </si:CompareTrigger>
+                </i:Interaction.Behaviors>
+            </ListView>
+            <Button VerticalAlignment="Top" Command="{x:Bind ViewModel.AddLogCommand}" Content="Add" />
+            <Button VerticalAlignment="Top" Command="{x:Bind ViewModel.FirstCommand}" Content="First" />
+            <Button VerticalAlignment="Top" Command="{x:Bind ViewModel.LastCommand}" Content="Last" />
+        </StackPanel>
+    </StackPanel>
+</Page>
