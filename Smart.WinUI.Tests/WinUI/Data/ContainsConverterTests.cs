@@ -3,6 +3,8 @@ namespace Smart.WinUI.Data;
 using Microsoft.UI;
 using Microsoft.UI.Xaml.Media;
 
+using Smart.WinUI.Markup;
+
 public sealed class ContainsConverterTests
 {
     private const string Language = "";
@@ -16,6 +18,17 @@ public sealed class ContainsConverterTests
 
         // Act & Assert
         Assert.Equal(true, converter.Convert("b", typeof(bool), list, Language));
+    }
+
+    [Fact]
+    public void ContainedValueInObjectListReturnsTrue()
+    {
+        // Arrange
+        var converter = new ContainsToBoolConverter();
+        var list = new ObjectList { 1, 3 };
+
+        // Act & Assert
+        Assert.Equal(true, converter.Convert(3, typeof(bool), list, Language));
     }
 
     [Fact]

@@ -4,22 +4,43 @@ using Microsoft.UI.Dispatching;
 
 public static class DispatcherQueueExtensions
 {
-    public static Task EnqueueAsync(this DispatcherQueue queue, Action action, CancellationToken cancellationToken = default) =>
-        queue.EnqueueAsync(() =>
+    public static Task EnqueueAsync(this DispatcherQueue queue, Action action, CancellationToken cancellationToken = default)
+    {
+        if (queue.HasThreadAccess && !cancellationToken.IsCancellationRequested)
         {
-            action();
-            return true;
-        }, cancellationToken);
+            return Invoke(action, static x =>
+            {
+                x();
+                return true;
+            });
+        }
 
-    public static Task EnqueueAsync<T>(this DispatcherQueue queue, Action<T> action, T arg, CancellationToken cancellationToken = default) =>
-        queue.EnqueueAsync(() =>
+        return queue.EnqueueAsync(ToFunc(action), cancellationToken);
+    }
+
+    public static Task EnqueueAsync<T>(this DispatcherQueue queue, Action<T> action, T arg, CancellationToken cancellationToken = default)
+    {
+        if (queue.HasThreadAccess && !cancellationToken.IsCancellationRequested)
         {
-            action(arg);
-            return true;
-        }, cancellationToken);
+            return Invoke((action, arg), static x =>
+            {
+                x.action(x.arg);
+                return true;
+            });
+        }
 
-    public static Task<TResult> EnqueueAsync<TResult>(this DispatcherQueue queue, Func<TResult> func, CancellationToken cancellationToken = default) =>
-        queue.EnqueueAsync(() => Task.FromResult(func()), cancellationToken);
+        return queue.EnqueueAsync(ToFunc(action, arg), cancellationToken);
+    }
+
+    public static Task<TResult> EnqueueAsync<TResult>(this DispatcherQueue queue, Func<TResult> func, CancellationToken cancellationToken = default)
+    {
+        if (queue.HasThreadAccess && !cancellationToken.IsCancellationRequested)
+        {
+            return Invoke(func, static x => x());
+        }
+
+        return queue.EnqueueAsync(ToTaskFunc(func), cancellationToken);
+    }
 
     public static Task EnqueueAsync(this DispatcherQueue queue, Func<Task> func, CancellationToken cancellationToken = default) =>
         queue.EnqueueAsync(async () =>
@@ -58,7 +79,33 @@ public static class DispatcherQueueExtensions
         return source.Task;
     }
 
+    private static Func<bool> ToFunc(Action action) => () =>
+    {
+        action();
+        return true;
+    };
+
+    private static Func<bool> ToFunc<T>(Action<T> action, T arg) => () =>
+    {
+        action(arg);
+        return true;
+    };
+
+    private static Func<Task<TResult>> ToTaskFunc<TResult>(Func<TResult> func) => () => Task.FromResult(func());
+
 #pragma warning disable CA1031
+    private static Task<TResult> Invoke<TState, TResult>(TState state, Func<TState, TResult> func)
+    {
+        try
+        {
+            return Task.FromResult(func(state));
+        }
+        catch (Exception ex)
+        {
+            return Task.FromException<TResult>(ex);
+        }
+    }
+
     private static async Task CompleteAsync<TResult>(TaskCompletionSource<TResult> source, Func<Task<TResult>> func)
     {
         try

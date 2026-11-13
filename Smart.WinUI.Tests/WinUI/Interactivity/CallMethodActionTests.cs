@@ -1,5 +1,7 @@
 namespace Smart.WinUI.Interactivity;
 
+using Microsoft.UI.Xaml.Data;
+
 public sealed class CallMethodActionTests
 {
     private interface IArgument;
@@ -27,6 +29,13 @@ public sealed class CallMethodActionTests
             ObjectCalled = true;
             ObjectReceived = argument;
         }
+    }
+
+    private sealed class NullConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, string? language) => null;
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, string? language) => throw new NotSupportedException();
     }
 
     [Fact]
@@ -116,6 +125,29 @@ public sealed class CallMethodActionTests
             // Assert
             Assert.True((bool)result);
             Assert.True(sender.ObjectCalled);
+        });
+    }
+
+    [Fact]
+    public void PassesNullWhenConverterReturnsNull()
+    {
+        XamlThread.Run(static () =>
+        {
+            // Arrange
+            var target = new MethodTarget();
+            var action = new CallMethodAction
+            {
+                TargetObject = target,
+                MethodName = nameof(MethodTarget.InvokeObject),
+                Converter = new NullConverter()
+            };
+
+            // Act
+            action.Execute(null, "eventArgument");
+
+            // Assert
+            Assert.True(target.ObjectCalled);
+            Assert.Null(target.ObjectReceived);
         });
     }
 }

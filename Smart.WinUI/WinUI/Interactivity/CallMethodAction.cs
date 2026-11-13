@@ -75,6 +75,8 @@ public sealed class CallMethodAction : DependencyObject, IAction
 
     private Type? cachedParameterType;
 
+    private bool cachedHasParameter;
+
     [RequiresUnreferencedCode("Method is resolved by reflection")]
     public CallMethodAction()
     {
@@ -109,14 +111,16 @@ public sealed class CallMethodAction : DependencyObject, IAction
 
             cachedType = target.GetType();
             cachedParameterType = parameterType;
+            cachedHasParameter = cachedMethod.GetParameters().Length > 0;
         }
 
-        if (cachedMethod.GetParameters().Length > 0)
+        if (cachedHasParameter)
         {
             var methodParameter = MethodParameter;
+            var converter = Converter;
             var argument = (methodParameter is not null) || (ReadLocalValue(MethodParameterProperty) != DependencyProperty.UnsetValue)
                 ? methodParameter
-                : Converter?.Convert(parameter, typeof(object), ConverterParameter, null) ?? parameter;
+                : converter is not null ? converter.Convert(parameter, typeof(object), ConverterParameter, null) : parameter;
             cachedMethod.Invoke(target, [argument]);
         }
         else

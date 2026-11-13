@@ -24,7 +24,7 @@ public sealed class CompareTrigger : Trigger
         nameof(Expression),
         typeof(ICompareExpression),
         typeof(CompareTrigger),
-        new PropertyMetadata(CompareExpressions.Equal));
+        new PropertyMetadata(CompareExpressions.Equal, HandlePropertyChanged));
 
     public object? Binding
     {

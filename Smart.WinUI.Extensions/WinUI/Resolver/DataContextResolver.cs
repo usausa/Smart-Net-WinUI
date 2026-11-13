@@ -1,5 +1,7 @@
 namespace Smart.WinUI.Resolver;
 
+using System.Diagnostics.CodeAnalysis;
+
 using Microsoft.UI.Xaml;
 
 public static class DataContextResolver
@@ -25,7 +27,7 @@ public static class DataContextResolver
     public static Type GetType(DependencyObject obj) =>
         (Type)obj.GetValue(TypeProperty);
 
-    public static void SetType(DependencyObject obj, Type value) =>
+    public static void SetType(DependencyObject obj, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type value) =>
         obj.SetValue(TypeProperty, value);
 
     public static bool GetDisposeOnChanged(DependencyObject obj) =>

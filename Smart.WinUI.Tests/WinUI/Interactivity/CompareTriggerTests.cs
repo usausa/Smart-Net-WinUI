@@ -84,6 +84,24 @@ public sealed class CompareTriggerTests
     }
 
     [Fact]
+    public void ReevaluatesWhenExpressionChanges()
+    {
+        XamlThread.Run(static () =>
+        {
+            // Arrange
+            var (_, trigger, action) = Create();
+            trigger.Parameter = 5;
+            trigger.Binding = 6;
+
+            // Act
+            trigger.Expression = CompareExpressions.GreaterThan;
+
+            // Assert
+            Assert.Single(action.Calls);
+        });
+    }
+
+    [Fact]
     public void DoesNotExecuteActionsWhenDetached()
     {
         XamlThread.Run(static () =>

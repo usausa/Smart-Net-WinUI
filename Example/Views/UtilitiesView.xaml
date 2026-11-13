@@ -2,11 +2,16 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:Example.Views"
+      xmlns:s="using:Smart.WinUI"
+      xmlns:sd="using:Smart.WinUI.Data"
       xmlns:si="using:Smart.WinUI.Interactivity"
       x:Class="Example.Views.UtilitiesView">
+    <Page.Resources>
+        <sd:BoolToTextConverter x:Key="SelectedText" TrueValue="selected" FalseValue="-" />
+    </Page.Resources>
     <StackPanel Padding="24" Spacing="16">
         <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Width="260" VerticalAlignment="Center" Text="FindAscendant / FindDescendants" />
+            <TextBlock Width="300" VerticalAlignment="Center" Text="FindAscendant / FindDescendants" />
             <Border x:Name="TreeRoot" Tag="outer">
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Button x:Name="FindButton" Click="OnFindClick" Content="Find" />
@@ -15,7 +20,7 @@
             </Border>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Width="260" VerticalAlignment="Center" Text="FindParent / IsDescendantOf" />
+            <TextBlock Width="300" VerticalAlignment="Center" Text="FindParent / IsDescendantOf" />
             <Border x:Name="ParentRoot" Tag="parent">
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <Button Content="Open">
@@ -33,17 +38,17 @@
             </Border>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Width="260" VerticalAlignment="Center" Text="FindFromPoint" />
+            <TextBlock Width="300" VerticalAlignment="Center" Text="FindFromPoint" />
             <Button Click="OnHitClick" Content="Hit" />
             <TextBlock x:Name="HitResult" VerticalAlignment="Center" AutomationProperties.AutomationId="HitResult" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Width="260" VerticalAlignment="Center" Text="EnqueueAsync" />
+            <TextBlock Width="300" VerticalAlignment="Center" Text="EnqueueAsync" />
             <Button Command="{x:Bind ViewModel.EnqueueCommand}" Content="Enqueue" />
             <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.EnqueueResult, Mode=OneWay}" AutomationProperties.AutomationId="EnqueueResult" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Width="260" VerticalAlignment="Center" Text="ChangeCursorAction (Hand)" />
+            <TextBlock Width="300" VerticalAlignment="Center" Text="ChangeCursorAction (Hand)" />
             <Border Width="160" Height="32" Background="{ThemeResource ControlFillColorSecondaryBrush}">
                 <i:Interaction.Behaviors>
                     <i:EventTriggerBehavior EventName="Loaded">
@@ -53,10 +58,78 @@
             </Border>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12">
-            <TextBlock Width="260" VerticalAlignment="Center" Text="ColorExtensions (HslColor)" />
+            <TextBlock Width="300" VerticalAlignment="Center" Text="ColorExtensions (HslColor)" />
             <Slider Width="200" Maximum="360" Minimum="0" Value="{x:Bind ViewModel.Hue, Mode=TwoWay}" AutomationProperties.AutomationId="HueSlider" />
             <Rectangle Width="32" Height="32" Fill="{x:Bind local:UtilitiesView.ToBrush(ViewModel.Hue), Mode=OneWay}" />
             <TextBlock VerticalAlignment="Center" Text="{x:Bind local:UtilitiesView.ToHex(ViewModel.Hue), Mode=OneWay}" AutomationProperties.AutomationId="HueColor" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="300" VerticalAlignment="Center" Text="Ancestor (ListViewItem.IsSelected)" />
+            <ListView ItemsSource="{x:Bind ViewModel.Letters}" SelectionMode="Single" AutomationProperties.AutomationId="AncestorList">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="{x:Bind}" />
+                            <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
+                            <TextBlock Text="{Binding Path=(s:Ancestor.Value).IsSelected, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource SelectedText}, FallbackValue=-}" s:Ancestor.Type="ListViewItem" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="300" VerticalAlignment="Center" Text="ActualSize (Width)" />
+            <Slider Width="160" Maximum="160" Minimum="40" Value="{x:Bind ViewModel.BoxWidth, Mode=TwoWay}" AutomationProperties.AutomationId="SizeSlider" />
+            <Border x:Name="SizedBox" Width="{x:Bind ViewModel.BoxWidth, Mode=OneWay}" Height="24" Background="{ThemeResource AccentFillColorDefaultBrush}" s:ActualSize.IsEnabled="True" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind SizedBox.(s:ActualSize.Width), Mode=OneWay}" AutomationProperties.AutomationId="SizeValue" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="300" VerticalAlignment="Center" Text="ClipToBounds" />
+            <ToggleSwitch x:Name="ClipSwitch" IsOn="True" AutomationProperties.AutomationId="ClipSwitch" />
+            <Canvas Width="120" Height="32" Background="{ThemeResource ControlFillColorSecondaryBrush}" s:ClipToBounds.IsEnabled="{x:Bind ClipSwitch.IsOn, Mode=OneWay}" AutomationProperties.AutomationId="ClipCanvas">
+                <Rectangle Canvas.Left="80" Width="120" Height="32" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
+            </Canvas>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="300" VerticalAlignment="Center" Text="HyperlinkCommand" />
+            <TextBlock VerticalAlignment="Center">
+                <Hyperlink s:HyperlinkCommand.Command="{x:Bind ViewModel.LinkCommand}" s:HyperlinkCommand.CommandParameter="link">Execute</Hyperlink>
+            </TextBlock>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.LinkResult, Mode=OneWay}" AutomationProperties.AutomationId="LinkResult" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <i:Interaction.Behaviors>
+                <si:KeyTrigger Key="K" Modifiers="Control">
+                    <i:InvokeCommandAction Command="{x:Bind ViewModel.KeyCommand}" CommandParameter="Ctrl+K" />
+                </si:KeyTrigger>
+            </i:Interaction.Behaviors>
+            <TextBlock Width="300" VerticalAlignment="Center" Text="KeyTrigger (Enter, Ctrl+K)" />
+            <TextBox Width="200" AutomationProperties.AutomationId="KeyTarget">
+                <i:Interaction.Behaviors>
+                    <si:KeyTrigger ActiveOnFocus="True" Key="Enter">
+                        <i:InvokeCommandAction Command="{x:Bind ViewModel.KeyCommand}" CommandParameter="Enter" />
+                    </si:KeyTrigger>                </i:Interaction.Behaviors>
+            </TextBox>
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.KeyText, Mode=OneWay}" AutomationProperties.AutomationId="KeyText" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="300" VerticalAlignment="Center" Text="LaunchUriOrFileAction (ms-calculator:)" />
+            <Button Content="Launch">
+                <i:Interaction.Behaviors>
+                    <i:EventTriggerBehavior EventName="Click">
+                        <si:LaunchUriOrFileAction Path="ms-calculator:" />
+                    </i:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Width="300" VerticalAlignment="Center" Text="ExceptionHandlingSynchronizationContext" />
+            <Button Command="{x:Bind ViewModel.ThrowCommand}" Content="Throw" />
         </StackPanel>
     </StackPanel>
 </Page>

@@ -1,14 +1,24 @@
 namespace Smart.WinUI.Data;
 
+using System.Collections;
+
 using Microsoft.UI.Xaml.Data;
 
 public sealed partial class ArrayIndexConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, string? language)
     {
-        if ((value is int index) && (parameter is Array array) && (index >= 0) && (index < array.Length))
+        if ((value is int index) && (index >= 0))
         {
-            return array.GetValue(index);
+            if ((parameter is Array array) && (index < array.Length))
+            {
+                return array.GetValue(index);
+            }
+
+            if ((parameter is IList list) && (index < list.Count))
+            {
+                return list[index];
+            }
         }
 
         return null;
@@ -16,19 +26,6 @@ public sealed partial class ArrayIndexConverter : IValueConverter
 
     public object ConvertBack(object? value, Type targetType, object? parameter, string? language)
     {
-        if (parameter is Array array)
-        {
-            for (var i = 0; i < array.Length; i++)
-            {
-                var element = array.GetValue(i);
-                if (((element is not null) && element.Equals(value)) ||
-                    ((element is null) && (value is null)))
-                {
-                    return i;
-                }
-            }
-        }
-
-        return -1;
+        return parameter is IList list ? list.IndexOf(value) : -1;
     }
 }

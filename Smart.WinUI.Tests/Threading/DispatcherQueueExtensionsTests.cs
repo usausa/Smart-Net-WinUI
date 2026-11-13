@@ -10,6 +10,8 @@ public sealed class DispatcherQueueExtensionsTests
 
     private static void Throw() => throw new InvalidOperationException();
 
+    private static int ThrowResult() => throw new InvalidOperationException();
+
     [Fact]
     public void RunsInlineOnDispatcherThread()
     {
@@ -144,6 +146,70 @@ public sealed class DispatcherQueueExtensionsTests
             // Assert
             Assert.IsType<InvalidOperationException>(inline.Exception?.InnerException);
             Assert.IsType<InvalidOperationException>(other.Exception?.InnerException);
+        });
+    }
+
+    [Fact]
+    public void CapturesExceptionInlineWithArgumentAndResult()
+    {
+        XamlThread.Run(static () =>
+        {
+            var queue = DispatcherQueue.GetForCurrentThread();
+
+            var withArgument = queue.EnqueueAsync(static _ => Throw(), "abc");
+            var withResult = queue.EnqueueAsync(ThrowResult);
+
+            Assert.IsType<InvalidOperationException>(withArgument.Exception?.InnerException);
+            Assert.IsType<InvalidOperationException>(withResult.Exception?.InnerException);
+        });
+    }
+
+    [Fact]
+    public void ReturnsResultInlineOnDispatcherThread()
+    {
+        XamlThread.Run(static () =>
+        {
+            var queue = DispatcherQueue.GetForCurrentThread();
+
+            var task = queue.EnqueueAsync(static () => Environment.CurrentManagedThreadId);
+
+            Assert.True(task.IsCompletedSuccessfully);
+            Assert.Equal(Environment.CurrentManagedThreadId, task.Result);
+        });
+    }
+
+    [Fact]
+    public void RunsInlineWithoutAllocation()
+    {
+        XamlThread.Run(static () =>
+        {
+            var queue = DispatcherQueue.GetForCurrentThread();
+            var count = 0;
+            void Increment() => count++;
+            void Add(int x) => count += x;
+            static int One() => 1;
+            var action = Increment;
+            var actionWithArgument = Add;
+            var func = One;
+            for (var i = 0; i < 10; i++)
+            {
+                _ = queue.EnqueueAsync(action);
+                _ = queue.EnqueueAsync(actionWithArgument, 1);
+                _ = queue.EnqueueAsync(func);
+            }
+
+            var before = GC.GetAllocatedBytesForCurrentThread();
+            for (var i = 0; i < 100; i++)
+            {
+                _ = queue.EnqueueAsync(action);
+                _ = queue.EnqueueAsync(actionWithArgument, 1);
+                _ = queue.EnqueueAsync(func);
+            }
+
+            var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.InRange(allocated, 0, 99);
+            Assert.Equal(220, count);
         });
     }
 

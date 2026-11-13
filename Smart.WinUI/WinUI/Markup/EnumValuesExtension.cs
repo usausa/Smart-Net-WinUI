@@ -15,7 +15,15 @@ public sealed partial class EnumValuesExtension : MarkupExtension
 
     public Type Type { get; set; } = default!;
 
-    [UnconditionalSuppressMessage("Trimming", "IL2111", Justification = "Enum type is specified by user; they must ensure it is preserved")]
-    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Enum.GetValues(Type) uses dynamic code; use Enum.GetValues<TEnum>() for AOT-safe usage")]
-    protected override object ProvideValue() => Enum.GetValues(Type);
+    protected override object ProvideValue()
+    {
+        var values = Enum.GetValuesAsUnderlyingType(Type);
+        var result = new object[values.Length];
+        for (var i = 0; i < values.Length; i++)
+        {
+            result[i] = Enum.ToObject(Type, values.GetValue(i)!);
+        }
+
+        return result;
+    }
 }

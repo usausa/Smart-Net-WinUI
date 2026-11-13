@@ -13,7 +13,7 @@ public sealed partial class ColorToBrushConverter : IValueConverter
         return value is Color color ? new SolidColorBrush(color) : null;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, string? language)
+    public object ConvertBack(object? value, Type targetType, object? parameter, string? language)
     {
         return value is SolidColorBrush brush ? brush.Color : DependencyProperty.UnsetValue;
     }

@@ -3,6 +3,7 @@ namespace Example.Views;
 using Smart.Mvvm;
 using Smart.WinUI.ViewModels;
 
+[WinRT.GeneratedBindableCustomProperty]
 internal sealed partial class DataViewModel : ExtendViewModelBase
 {
     [ObservableProperty]
@@ -22,6 +23,9 @@ internal sealed partial class DataViewModel : ExtendViewModelBase
 
     [ObservableProperty]
     public partial string Amount { get; set; }
+
+    [ObservableProperty]
+    public partial int Index { get; set; }
 
     public DataViewModel()
     {

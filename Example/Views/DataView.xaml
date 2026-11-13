@@ -39,6 +39,16 @@
         </sd:MapToTextConverter>
         <sd:EnumDescriptionConverter x:Key="EnumDescription" />
         <sd:ObjectConvertConverter x:Key="ObjectConvert" />
+        <sd:ArrayIndexConverter x:Key="ArrayIndex" />
+        <sm:ObjectList x:Key="IndexNames">
+            <x:String>Zero</x:String>
+            <x:String>One</x:String>
+            <x:String>Two</x:String>
+        </sm:ObjectList>
+        <sm:ObjectList x:Key="LargeSizes">
+            <x:String>Medium</x:String>
+            <x:String>Large</x:String>
+        </sm:ObjectList>
     </Page.Resources>
 
     <ScrollViewer>
@@ -76,6 +86,14 @@
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <TextBlock Width="150" VerticalAlignment="Center" Text="Amount" />
                     <TextBox Width="180" Text="{x:Bind ViewModel.Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="150" VerticalAlignment="Center" Text="Index" />
+                    <ComboBox Width="180" SelectedIndex="{x:Bind ViewModel.Index, Mode=TwoWay}" AutomationProperties.AutomationId="IndexCombo">
+                        <x:String>0</x:String>
+                        <x:String>1</x:String>
+                        <x:String>2</x:String>
+                    </ComboBox>
                 </StackPanel>
             </StackPanel>
 
@@ -151,6 +169,14 @@
                 <StackPanel Orientation="Horizontal" Spacing="12">
                     <TextBlock Width="300" VerticalAlignment="Center" Text="ObjectConvert" />
                     <ProgressBar Width="120" Maximum="100" Value="{x:Bind ViewModel.Amount, Mode=OneWay, Converter={StaticResource ObjectConvert}}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="ArrayIndex (ObjectList)" />
+                    <TextBlock Text="{Binding Path=Index, Converter={StaticResource ArrayIndex}, ConverterParameter={StaticResource IndexNames}}" AutomationProperties.AutomationId="ArrayIndexText" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <TextBlock Width="300" Text="ContainsToText (ObjectList)" />
+                    <TextBlock Text="{Binding Path=Size, Converter={sm:ContainsToText True='Medium or larger', False=Small}, ConverterParameter={StaticResource LargeSizes}}" AutomationProperties.AutomationId="ContainsText" />
                 </StackPanel>
             </StackPanel>
         </Grid>

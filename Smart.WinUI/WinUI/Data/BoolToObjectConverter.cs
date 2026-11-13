@@ -23,7 +23,7 @@ public abstract class BoolToObjectConverter<T> : IValueConverter
         return FalseValue;
     }
 
-    public object? ConvertBack(object? value, Type targetType, object? parameter, string? language)
+    public object ConvertBack(object? value, Type targetType, object? parameter, string? language)
     {
         if (value is T typed)
         {

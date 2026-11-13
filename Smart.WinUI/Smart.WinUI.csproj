@@ -20,8 +20,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="2.6.5" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
-    <PackageReference Include="Usa.Smart.Converter" Version="2.18.0" />
-    <PackageReference Include="Usa.Smart.Core" Version="2.20.0" />
+    <PackageReference Include="Usa.Smart.Converter" Version="2.20.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="2.22.0" />
   </ItemGroup>
 
 </Project>

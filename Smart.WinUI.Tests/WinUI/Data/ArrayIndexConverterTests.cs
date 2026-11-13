@@ -1,5 +1,7 @@
 namespace Smart.WinUI.Data;
 
+using Smart.WinUI.Markup;
+
 public sealed class ArrayIndexConverterTests
 {
     private const string Language = "";
@@ -16,6 +18,20 @@ public sealed class ArrayIndexConverterTests
 
         // Assert
         Assert.Equal("b", result);
+    }
+
+    [Fact]
+    public void ConvertReturnsElementOfList()
+    {
+        // Arrange
+        var converter = new ArrayIndexConverter();
+        var list = new ObjectList { "a", "b", "c" };
+
+        // Act
+        var result = converter.Convert(2, typeof(object), list, Language);
+
+        // Assert
+        Assert.Equal("c", result);
     }
 
     [Fact]
@@ -71,6 +87,20 @@ public sealed class ArrayIndexConverterTests
 
         // Assert
         Assert.Equal(1, result);
+    }
+
+    [Fact]
+    public void ConvertBackReturnsIndexInList()
+    {
+        // Arrange
+        var converter = new ArrayIndexConverter();
+        var list = new ObjectList { "x", "y", "z" };
+
+        // Act
+        var result = converter.ConvertBack("z", typeof(int), list, Language);
+
+        // Assert
+        Assert.Equal(2, result);
     }
 
     [Fact]
