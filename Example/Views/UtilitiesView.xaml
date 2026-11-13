@@ -2,7 +2,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:i="using:Microsoft.Xaml.Interactivity"
       xmlns:local="using:Example.Views"
-      xmlns:s="using:Smart.WinUI"
       xmlns:sd="using:Smart.WinUI.Data"
       xmlns:si="using:Smart.WinUI.Interactivity"
       x:Class="Example.Views.UtilitiesView">
@@ -76,7 +75,7 @@
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <TextBlock Text="{x:Bind}" />
                             <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                            <TextBlock Text="{Binding Path=(s:Ancestor.Value).IsSelected, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource SelectedText}, FallbackValue=-}" s:Ancestor.Type="ListViewItem" />
+                            <TextBlock Text="{Binding Path=(si:Ancestor.Value).IsSelected, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource SelectedText}, FallbackValue=-}" si:Ancestor.Type="ListViewItem" />
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -85,20 +84,20 @@
         <StackPanel Orientation="Horizontal" Spacing="12">
             <TextBlock Width="300" VerticalAlignment="Center" Text="ActualSize (Width)" />
             <Slider Width="160" Maximum="160" Minimum="40" Value="{x:Bind ViewModel.BoxWidth, Mode=TwoWay}" AutomationProperties.AutomationId="SizeSlider" />
-            <Border x:Name="SizedBox" Width="{x:Bind ViewModel.BoxWidth, Mode=OneWay}" Height="24" Background="{ThemeResource AccentFillColorDefaultBrush}" s:ActualSize.IsEnabled="True" />
-            <TextBlock VerticalAlignment="Center" Text="{x:Bind SizedBox.(s:ActualSize.Width), Mode=OneWay}" AutomationProperties.AutomationId="SizeValue" />
+            <Border x:Name="SizedBox" Width="{x:Bind ViewModel.BoxWidth, Mode=OneWay}" Height="24" Background="{ThemeResource AccentFillColorDefaultBrush}" si:ActualSize.IsEnabled="True" />
+            <TextBlock VerticalAlignment="Center" Text="{x:Bind SizedBox.(si:ActualSize.Width), Mode=OneWay}" AutomationProperties.AutomationId="SizeValue" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12">
             <TextBlock Width="300" VerticalAlignment="Center" Text="ClipToBounds" />
             <ToggleSwitch x:Name="ClipSwitch" IsOn="True" AutomationProperties.AutomationId="ClipSwitch" />
-            <Canvas Width="120" Height="32" Background="{ThemeResource ControlFillColorSecondaryBrush}" s:ClipToBounds.IsEnabled="{x:Bind ClipSwitch.IsOn, Mode=OneWay}" AutomationProperties.AutomationId="ClipCanvas">
+            <Canvas Width="120" Height="32" Background="{ThemeResource ControlFillColorSecondaryBrush}" si:ClipToBounds.IsEnabled="{x:Bind ClipSwitch.IsOn, Mode=OneWay}" AutomationProperties.AutomationId="ClipCanvas">
                 <Rectangle Canvas.Left="80" Width="120" Height="32" Fill="{ThemeResource AccentFillColorDefaultBrush}" />
             </Canvas>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="12">
             <TextBlock Width="300" VerticalAlignment="Center" Text="HyperlinkCommand" />
             <TextBlock VerticalAlignment="Center">
-                <Hyperlink s:HyperlinkCommand.Command="{x:Bind ViewModel.LinkCommand}" s:HyperlinkCommand.CommandParameter="link">Execute</Hyperlink>
+                <Hyperlink si:HyperlinkCommand.Command="{x:Bind ViewModel.LinkCommand}" si:HyperlinkCommand.CommandParameter="link">Execute</Hyperlink>
             </TextBlock>
             <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.LinkResult, Mode=OneWay}" AutomationProperties.AutomationId="LinkResult" />
         </StackPanel>

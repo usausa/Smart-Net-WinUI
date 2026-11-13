@@ -1,4 +1,4 @@
-namespace Smart.WinUI;
+namespace Smart.WinUI.Interactivity;
 
 using Microsoft.UI.Xaml.Controls;
 
