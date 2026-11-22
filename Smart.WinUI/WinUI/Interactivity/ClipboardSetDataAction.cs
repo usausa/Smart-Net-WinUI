@@ -8,6 +8,7 @@ using Microsoft.Xaml.Interactivity;
 
 using Windows.ApplicationModel.DataTransfer;
 
+[RequiresUnreferencedCode("Uses GetMethod to find method by name; method metadata may be trimmed.")]
 public sealed class ClipboardSetDataAction : DependencyObject, IAction
 {
     public static readonly DependencyProperty TargetObjectProperty = DependencyProperty.Register(
@@ -46,16 +47,12 @@ public sealed class ClipboardSetDataAction : DependencyObject, IAction
         set => SetValue(FormatProperty, value);
     }
 
-    private MethodInfo? cachedMethod;
+    private MethodInvoker? cachedInvoker;
+
+    private string cachedMethodName = string.Empty;
 
     private Type? cachedType;
 
-    [RequiresUnreferencedCode("Method is resolved by reflection")]
-    public ClipboardSetDataAction()
-    {
-    }
-
-    [UnconditionalSuppressMessage("Trimming", "IL2075", Justification = "Target type is determined at runtime via XAML; callers must ensure the type is preserved")]
     public object Execute(object? sender, object? parameter)
     {
         var target = TargetObject;
@@ -65,19 +62,22 @@ public sealed class ClipboardSetDataAction : DependencyObject, IAction
             return false;
         }
 
-        if ((cachedMethod is null) ||
+        if ((cachedInvoker is null) ||
             (cachedType != target.GetType()) ||
-            (cachedMethod.Name != methodName))
+            (cachedMethodName != methodName))
         {
-            cachedMethod = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
-            cachedType = target.GetType();
-            if (cachedMethod is null)
+            var methodInfo = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
+            if (methodInfo is null)
             {
                 return false;
             }
+
+            cachedInvoker = MethodInvoker.Create(methodInfo);
+            cachedMethodName = methodName;
+            cachedType = target.GetType();
         }
 
-        var result = cachedMethod.Invoke(target, null);
+        var result = cachedInvoker.Invoke(target);
         if (result is null)
         {
             return false;

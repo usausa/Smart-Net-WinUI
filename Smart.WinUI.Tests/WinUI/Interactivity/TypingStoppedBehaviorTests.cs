@@ -98,6 +98,37 @@ public sealed class TypingStoppedBehaviorTests
     }
 
     [Fact]
+    public void UsesNullWhenCommandParameterIsSetToNull()
+    {
+        XamlThread.Run(static () =>
+        {
+            // Arrange
+            var textBox = new TextBox();
+            var executed = false;
+            object? received = "initial";
+            var behavior = new TypingStoppedBehavior
+            {
+                Command = new DelegateCommand<object?>(x =>
+                {
+                    executed = true;
+                    received = x;
+                }),
+                CommandParameter = null,
+                Delay = TimeSpan.FromMilliseconds(10)
+            };
+            Interaction.GetBehaviors(textBox).Add(behavior);
+
+            // Act
+            ChangeText(behavior, textBox, "abc");
+            XamlThread.ProcessUntil(() => executed, Timeout);
+
+            // Assert
+            Assert.True(executed);
+            Assert.Null(received);
+        });
+    }
+
+    [Fact]
     public void DoesNotExecuteCommandAfterDetached()
     {
         XamlThread.Run(static () =>

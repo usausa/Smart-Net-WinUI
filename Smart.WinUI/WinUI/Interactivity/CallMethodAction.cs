@@ -7,6 +7,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.Xaml.Interactivity;
 
+using Smart.Linq;
+
+[RequiresUnreferencedCode("Uses GetRuntimeMethods to find method by name; method metadata may be trimmed.")]
 public sealed class CallMethodAction : DependencyObject, IAction
 {
     public static readonly DependencyProperty TargetObjectProperty = DependencyProperty.Register(
@@ -69,7 +72,9 @@ public sealed class CallMethodAction : DependencyObject, IAction
         set => SetValue(ConverterParameterProperty, value);
     }
 
-    private MethodInfo? cachedMethod;
+    private MethodInvoker? cachedInvoker;
+
+    private string cachedMethodName = string.Empty;
 
     private Type? cachedType;
 
@@ -77,12 +82,6 @@ public sealed class CallMethodAction : DependencyObject, IAction
 
     private bool cachedHasParameter;
 
-    [RequiresUnreferencedCode("Method is resolved by reflection")]
-    public CallMethodAction()
-    {
-    }
-
-    [UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Target type is determined at runtime via XAML; callers must ensure the type is preserved")]
     public object Execute(object? sender, object? parameter)
     {
         var target = TargetObject ?? sender;
@@ -92,40 +91,42 @@ public sealed class CallMethodAction : DependencyObject, IAction
             return false;
         }
 
-        var parameterType = MethodParameter?.GetType();
-        if ((cachedMethod is null) ||
+        var methodParameter = MethodParameter;
+        var parameterType = methodParameter?.GetType();
+        if ((cachedInvoker is null) ||
             (cachedType != target.GetType()) ||
-            (cachedMethod.Name != methodName) ||
+            (cachedMethodName != methodName) ||
             (cachedParameterType != parameterType))
         {
-            cachedMethod = target.GetType().GetRuntimeMethods().FirstOrDefault(m =>
-                (m.Name == methodName) &&
+            var methodInfo = target.GetType().GetRuntimeMethods().FirstOrDefault((methodName, methodParameter), static (m, s) =>
+                (m.Name == s.methodName) &&
                 ((m.GetParameters().Length == 0) ||
                  ((m.GetParameters().Length == 1) &&
-                  ((MethodParameter is null) ||
-                   m.GetParameters()[0].ParameterType.GetTypeInfo().IsAssignableFrom(MethodParameter.GetType().GetTypeInfo())))));
-            if (cachedMethod is null)
+                  ((s.methodParameter is null) ||
+                   m.GetParameters()[0].ParameterType.GetTypeInfo().IsAssignableFrom(s.methodParameter.GetType().GetTypeInfo())))));
+            if (methodInfo is null)
             {
                 return false;
             }
 
+            cachedInvoker = MethodInvoker.Create(methodInfo);
+            cachedMethodName = methodName;
             cachedType = target.GetType();
             cachedParameterType = parameterType;
-            cachedHasParameter = cachedMethod.GetParameters().Length > 0;
+            cachedHasParameter = methodInfo.GetParameters().Length > 0;
         }
 
         if (cachedHasParameter)
         {
-            var methodParameter = MethodParameter;
             var converter = Converter;
-            var argument = (methodParameter is not null) || (ReadLocalValue(MethodParameterProperty) != DependencyProperty.UnsetValue)
+            var argument = (methodParameter is not null) || this.IsSet(MethodParameterProperty)
                 ? methodParameter
                 : converter is not null ? converter.Convert(parameter, typeof(object), ConverterParameter, null) : parameter;
-            cachedMethod.Invoke(target, [argument]);
+            cachedInvoker.Invoke(target, argument);
         }
         else
         {
-            cachedMethod.Invoke(target, null);
+            cachedInvoker.Invoke(target);
         }
 
         return true;

@@ -8,6 +8,7 @@ using Microsoft.Xaml.Interactivity;
 
 using Smart.Mvvm.Messaging;
 
+[RequiresUnreferencedCode("Uses GetRuntimeProperty to find property by name; property metadata may be trimmed.")]
 public sealed class ResolvePropertyAction : DependencyObject, IAction
 {
     public static readonly DependencyProperty TargetObjectProperty = DependencyProperty.Register(
@@ -38,12 +39,6 @@ public sealed class ResolvePropertyAction : DependencyObject, IAction
 
     private Type? cachedType;
 
-    [RequiresUnreferencedCode("Property is resolved by reflection")]
-    public ResolvePropertyAction()
-    {
-    }
-
-    [UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Target type is determined at runtime via XAML; callers must ensure the type is preserved")]
     public object Execute(object? sender, object? parameter)
     {
         if (parameter is not ResolveEventArgs args)

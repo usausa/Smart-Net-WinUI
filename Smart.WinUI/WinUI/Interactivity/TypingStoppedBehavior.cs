@@ -91,7 +91,7 @@ public sealed class TypingStoppedBehavior : Behavior<TextBox>
         }
 
         var commandParameter = CommandParameter;
-        var parameter = (commandParameter is not null) || (ReadLocalValue(CommandParameterProperty) != DependencyProperty.UnsetValue) ? commandParameter : AssociatedObject.Text;
+        var parameter = (commandParameter is not null) || this.IsSet(CommandParameterProperty) ? commandParameter : AssociatedObject.Text;
         if (command.CanExecute(parameter))
         {
             command.Execute(parameter);
